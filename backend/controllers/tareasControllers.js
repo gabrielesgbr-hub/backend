@@ -1,18 +1,36 @@
-const getTareas = (req, res) => {
-    res.status(200).json({"mensaje":"getTareas"}) 
-}
+const asyncHandler = require('express-async-handler')
+const Tarea = require('../models/tareasModel')
 
-const createTareas = (req, res) => {
-    res.status(201).json({"mensaje":"createTareas"}) 
-}
+const getTareas = asyncHandler(async(req, res) => {
+    const tareas = await Tarea.find()
+    res.status(200).json(tareas)
+})
 
-const updateTareas = (req, res) => {
-    res.status(200).json({"mensaje":`Tarea modificada ${req.params.id}`}) 
-}
+const createTareas = asyncHandler(async(req, res) => {
+    if(!req.body.texto){
+        res.status(400)
+        throw new Error('Favor de teclar un texto de la tarea')
+    }
+    const tarea = await Tarea.create({
+        texto: req.body.texto
+    })
+    res.status(201).json(tarea)
+})
 
-const deleteTareas = (req, res) => {
+const updateTareas = asyncHandler(async(req, res) => {
+    //Verificar que la tarea que queremos modificar exista
+    const tarea = await Tarea.findById(req.params.id)
+    if(!tarea){
+        res.status(404)
+        throw new Error('Tarea no encontrada')
+    }
+    const tareaUpdated = await Tarea.findByIdAndUpdate(req.params.id, req.body, {new:true})
+    res.status(200),json(tareaUpdated) 
+})
+
+const deleteTareas = asyncHandler(async(req, res) => {
     res.status(200).json({"mensaje":`Tarea borrada ${req.params.id}`}) 
-}
+})
 
 module.exports = {
     getTareas,

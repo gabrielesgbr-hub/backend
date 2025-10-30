@@ -14,6 +14,7 @@ app.use(express.json()) //envia y recibe datos en forma de JavaScript Object Not
 app.use(express.urlencoded({extended:false}))
 
 app.use('/api/tareas', require('./routes/tareasRoutes')) //. significa que busca en el mismo nivel
+app.use('/api/users', require('./routes/usersRoutes'))
 
 app.use(errorHandler)
 

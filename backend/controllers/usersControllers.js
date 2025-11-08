@@ -4,7 +4,20 @@ const asyncHandler = require('express-async-handler')
 const User = require ('../models/usersModels')
 
 const login = asyncHandler(async(req,res) => {
-    res.status(200).json({message:'login'})
+    const {email, password} = req.body
+
+    //verificar que el usuario exista
+    const user = await User.findOne({email})
+
+    //Si el usuario existe verifico el hash
+    if (user && (await bcrypt.compare(password, user.password))){
+        res.status(200).json({
+            _id: user.id,
+            nombre: user.nombre,
+            email: user.email,
+            token: generarToken(user.id)
+        })
+    }
 })
 
 const register = asyncHandler(async(req,res) => {
@@ -48,8 +61,14 @@ const register = asyncHandler(async(req,res) => {
 })
 
 const data = asyncHandler(async(req,res) => {
-    res.status(200).json({message: 'data'})
+    res.status(200).json(req.user)
 })
+
+const generarToken = (id) => {
+    return jwt.sign({id}, process.env.JWT_SECRET, {
+        expiresIn: '30d'
+    })
+}
 
 module.exports = {
     login, register, data

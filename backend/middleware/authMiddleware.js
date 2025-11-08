@@ -13,19 +13,19 @@ const protect = async(req, res, next) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
             //obtener los datos del usaurio desde el token
-            req.user = await User.findById(decoded.id).select(-password)
+            req.user = await User.findById(decoded.id).select('-password')
 
             next()
         }
         catch(error){
             res.status(401)
-            throw new Error('Accedo no autorizado')
+            throw new Error('Acceso no autorizado')
         }
     }
 
     if(!token){
         res.status(401)
-        throw new Error('Accedo no autorizado, no se proporciono un token')
+        throw new Error('Acceso no autorizado, no se proporciono un token')
     }
 }
 

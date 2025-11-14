@@ -32,7 +32,7 @@ const updateTareas = asyncHandler(async(req, res) => {
         throw new Error('Acceso no autorizado')
     } else{
         const tareaUpdated = await Tarea.findByIdAndUpdate(req.params.id, req.body, {new:true})
-        res.status(200),json(tareaUpdated) 
+        res.status(200).json(tareaUpdated) 
     }
 })
 
